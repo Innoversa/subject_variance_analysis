@@ -130,7 +130,8 @@ class CNN_RNN(torch.nn.Sequential):
         self.rnn = self.rnn.double()
         self.fc1 = torch.nn.Linear(
             RNN_hidden_dim * direction * n_size_p, hidden_dim)
-
+        self.linear = torch.nn.Linear(in_features=self.RNN_hidden_dim, out_features=1)
+        
     def _get_conv_output(self, shape):
         bs = 1
         input = Variable(torch.rand(bs, *shape))
@@ -167,8 +168,9 @@ class CNN_RNN(torch.nn.Sequential):
                              batch_size, self.RNN_hidden_dim).to(self.device)
             v, hn = self.rnn(v.double(), h0.double())
 
-        v = torch.flatten(v, 1)
-        v = self.fc1(v.float())
+        # v = torch.flatten(v, 1)
+        # v = self.fc1(v.float())
+        v = self.linear(v[0]).flatten()
         return v
 
 
